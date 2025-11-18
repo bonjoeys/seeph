@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEEPH 2025 - Quiz & Blind Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Ajout de l'API Youtube -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .btn-option {
+            transition: all 0.2s ease;
+        }
+        .btn-option:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Animation pour les réponses */
+        .correct-anim { animation: pulse-green 0.5s forwards; }
+        .wrong-anim { animation: shake-red 0.5s forwards; }
+
+        @keyframes pulse-green {
+            0% { transform: scale(1); background-color: white; }
+            50% { transform: scale(1.02); background-color: #dcfce7; }
+            100% { transform: scale(1); background-color: #86efac; border-color: #16a34a; color: #052e16; }
+        }
+
+        @keyframes shake-red {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+        }
+
+        /* Blind Test Player Styles */
+        .blind-player-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Ratio 16:9 */
+            height: 0;
+            border-radius: 15px;
+            overflow: hidden;
+            background-color: #000;
+            border: 4px solid #764ba2;
+        }
+        
+        /* On cible l'iframe générée par l'API Youtube pour appliquer le flou */
+        .blind-player-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            filter: blur(20px); 
+            transform: scale(1.2); 
+            pointer-events: none; /* Empêche de cliquer sur le titre Youtube */
+        }
+        
+        .blind-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            z-index: 10;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        /* Timer Bar */
+        .timer-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+            display: none; /* Hidden by default */
+        }
+        
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .hidden-section { display: none !important; }
+    </style>
+</head>
+<body class="text-gray-800 flex items-center justify-center p-4">
+
+    <!-- Main Container -->
+    <div id="app-container" class="w-full max-w-2xl glass-panel p-6 md:p-10 relative overflow-hidden">
+        
+        <!-- Decorative Background Elements -->
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"></div>
+        
+        <!-- HEADER -->
+        <header class="text-center mb-8">
+            <div class="inline-block p-3 rounded-full bg-purple-100 text-purple-600 mb-3">
+                <i class="fas fa-universal-access text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                SEEPH 2025
+            </h1>
+            <p class="text-gray-500 text-sm mt-1">Semaine Européenne pour l'Emploi des Personnes Handicapées</p>
+        </header>
+
+        <!-- VIEW: HOME -->
+        <div id="view-home" class="flex flex-col gap-4 animate-fade-in">
+            <div class="bg-indigo-50 p-6 rounded-xl border-l-4 border-indigo-500 mb-4">
+                <p class="italic text-indigo-800 text-center">
+                    "Venez tester vos connaissances et votre oreille musicale tout en (re)découvrant les thématiques liées au handicap !"
+                </p>
+                <p class="text-right text-xs font-bold mt-2 text-indigo-400">- La Team Handicap</p>
+            </div>
+
+            <!-- BOUTON QUIZ (ACTIF) -->
+            <button onclick="startQuiz()" class="group relative w-full bg-white border-2 border-purple-500 p-6 rounded-xl shadow-md hover:bg-purple-50 transition-all text-left flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-purple-700">🎬 Ciné-Quiz</h2>
+                    <p class="text-sm text-gray-500">Testez votre culture cinéma & inclusion</p>
+                </div>
+                <i class="fas fa-film text-3xl text-purple-300 group-hover:text-purple-600 transition-colors"></i>
+            </button>
+
+            <!-- BOUTON BLIND TEST (GRISE / DESACTIVE) -->
+            <button disabled class="w-full bg-gray-100 border-2 border-gray-300 p-6 rounded-xl cursor-not-allowed text-left flex items-center justify-between opacity-75 grayscale">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h2 class="text-xl font-bold text-gray-500">🎵 Blind Test</h2>
+                        <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-full border border-amber-200 flex items-center">
+                            <i class="fas fa-tools mr-1"></i> En cours de dév
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-400">Ce module sera bientôt disponible !</p>
+                </div>
+                <i class="fas fa-music text-3xl text-gray-300"></i>
+            </button>
+        </div>
+
+        <!-- VIEW: QUIZ -->
+        <div id="view-quiz" class="hidden-section">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="goHome()" class="text-sm text-gray-500 hover:text-purple-600"><i class="fas fa-arrow-left"></i> Accueil</button>
+                <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Question <span id="quiz-current">1</span>/<span id="quiz-total">10</span></span>
+            </div>
+
+            <div class="mb-6">
+                <h3 id="quiz-question" class="text-xl font-bold text-gray-800 mb-4 leading-relaxed"></h3>
+                <div id="quiz-options" class="grid gap-3"></div>
+            </div>
+
+            <div id="quiz-feedback" class="hidden-section mt-6 bg-blue-50 p-5 rounded-xl border border-blue-200">
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 text-blue-500 text-xl"><i class="fas fa-lightbulb"></i></div>
+                    <div>
+                        <h4 class="font-bold text-blue-800 text-sm uppercase mb-1">Le Saviez-vous ?</h4>
+                        <p id="quiz-fact" class="text-sm text-blue-900 leading-relaxed"></p>
+                    </div>
+                </div>
+                <button onclick="nextQuestion()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    Question Suivante <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW: BLIND TEST -->
+        <div id="view-blindtest" class="hidden-section">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="goHome()" class="text-sm text-gray-500 hover:text-pink-600"><i class="fas fa-arrow-left"></i> Accueil</button>
+                <span class="bg-pink-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded">Piste <span id="bt-current">1</span>/<span id="bt-total">10</span></span>
+            </div>
+
+            <div class="text-center mb-4">
+                <h3 id="bt-instruction" class="text-lg font-bold text-gray-700 mb-2">Quel est cet artiste ?</h3>
+                
+                <!-- Player Container -->
+                <div class="blind-player-container w-full max-w-md mx-auto mb-4 border-4 border-gray-800 shadow-lg">
+                    <div id="bt-overlay-start" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/60 cursor-pointer hover:bg-black/50 transition" onclick="playBlindTestAudio()">
+                        <div id="bt-play-icon">
+                            <i class="fas fa-play-circle text-6xl text-white opacity-90 drop-shadow-lg mb-2"></i>
+                            <div class="text-white font-bold uppercase tracking-wider">Lancer l'extrait</div>
+                        </div>
+                        <div id="bt-loading-text" class="hidden-section text-white font-bold animate-pulse">
+                            <i class="fas fa-spinner fa-spin text-4xl mb-2"></i><br>
+                            Chargement du son...
+                        </div>
+                    </div>
+                    <!-- Div placeholder qui sera remplacé par l'API Youtube -->
+                    <div id="bt-player"></div>
+                </div>
+
+                <!-- Error message container -->
+                <div id="bt-error" class="hidden-section bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-4 shadow-sm" role="alert">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-exclamation-triangle text-xl"></i>
+                        <span class="font-bold">Lecture bloquée par YouTube</span>
+                    </div>
+                    <p class="text-sm mb-3">Le propriétaire de la vidéo empêche la lecture ici.</p>
+                    <a id="bt-fallback-link" href="#" target="_blank" class="inline-block bg-red-600 text-white text-sm font-bold py-2 px-4 rounded hover:bg-red-700 transition">
+                        <i class="fas fa-external-link-alt mr-2"></i> Écouter sur YouTube
+                    </a>
+                </div>
+
+                <!-- Timer -->
+                <div id="bt-timer-container" class="timer-container max-w-md mx-auto mb-6">
+                    <div id="bt-timer-bar" class="timer-bar"></div>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="bt-options" class="grid grid-cols-1 gap-3 max-w-md mx-auto hidden-section">
+                    <!-- Options générées ici -->
+                </div>
+            </div>
+
+            <!-- Result Card -->
+            <div id="bt-result" class="hidden-section transform transition-all duration-500 mt-4">
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-xl text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-pink-500"></div>
+                    
+                    <div id="bt-result-header" class="mb-3"></div>
+
+                    <h2 id="bt-artist-res" class="text-xl font-black text-gray-800 mb-0 uppercase">ARTISTE</h2>
+                    <h3 id="bt-song-res" class="text-md font-medium text-pink-600 mb-3 italic">"Titre"</h3>
+                    
+                    <div class="bg-pink-50 rounded-lg p-4 text-left text-sm">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-info-circle text-pink-500"></i>
+                            <h4 class="font-bold text-pink-800">Focus Handicap</h4>
+                        </div>
+                        <p id="bt-fact" class="text-gray-700 leading-relaxed"></p>
+                    </div>
+
+                    <button onclick="nextBlindTest()" class="mt-4 w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-lg">
+                        Suivant <i class="fas fa-forward ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: END SCREEN -->
+        <div id="view-end" class="hidden-section text-center py-10">
+            <div class="mb-6 inline-block p-4 rounded-full bg-green-100 text-green-600">
+                <i class="fas fa-trophy text-5xl"></i>
+            </div>
+            <h2 id="end-title" class="text-3xl font-bold text-gray-800 mb-2">Terminé !</h2>
+            <p id="end-score" class="text-4xl font-black text-purple-600 mb-2"></p>
+            <p id="end-message" class="text-gray-600 mb-8 px-4"></p>
+            <button onclick="goHome()" class="bg-purple-600 text-white px-8 py-3 rounded-full font-bold hover:bg-purple-700 transition shadow-lg transform hover:scale-105">
+                Retour à l'accueil
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA ---
+        // Données Quiz (Sahra)
+        const quizData = [
+            { q: "Dans quel film un riche aristocrate engage un auxiliaire de vie un peu… original ?", options: ["Forrest Gump", "Intouchables", "Le Huitième Jour", "Rain Man"], correct: 1, fact: "Le film a été adapté dans plus de 10 pays, mais la version française reste la plus aimée ❤️." },
+            { q: "Quel super-héros Marvel est aveugle mais voit “à sa manière” ?", options: ["Daredevil", "Cyclope", "Iron Man", "Wolverine"], correct: 0, fact: "Charlie Cox a appris à 'regarder sans voir' pour rendre ses scènes réalistes." },
+            { q: "Dans “Avatar”, Jake Sully est paraplégique. Vrai ou Faux ?", options: ["Vrai", "Faux"], correct: 0, fact: "Vrai ! James Cameron voulait montrer comment la technologie peut redonner de la mobilité." },
+            { q: "Quel compositeur célèbre, souvent représenté au cinéma, était sourd ?", options: ["Mozart", "Beethoven", "Bach", "Chopin"], correct: 1, fact: "Beethoven a composé certaines de ses plus grandes œuvres sans rien entendre !" },
+            { q: "Dans “Forrest Gump”, quel personnage perd ses jambes à la guerre ?", options: ["Bubba", "Le lieutenant Dan", "Jenny", "Forrest"], correct: 1, fact: "Gary Sinise a créé une fondation pour les vétérans blessés après le film." },
+            { q: "Dans “The Theory of Everything”, qui interprète Stephen Hawking ?", options: ["Eddie Redmayne", "Benedict Cumberbatch", "Tom Hiddleston", "Colin Firth"], correct: 0, fact: "Eddie Redmayne a rencontré Hawking plusieurs fois et s’en est inspiré profondément." },
+            { q: "Dans “Rain Man”, quel trouble caractérise le personnage principal ?", options: ["Dyslexie", "Autisme", "Paralysie cérébrale", "Surdité"], correct: 1, fact: "Le film a permis de sensibiliser le grand public à l'autisme, bien que ce soit une forme spécifique (savant)." },
+            { q: "Quel chanteur a incarné un homme aveugle dans “Ray” ?", options: ["Will Smith", "Jamie Foxx", "Denzel Washington", "Chadwick Boseman"], correct: 1, fact: "Jamie Foxx portait des lentilles opaques le rendant vraiment aveugle pendant le tournage." },
+            { q: "Dans “La Forme de l’eau”, l’héroïne est muette. Vrai ou faux ?", options: ["Vrai", "Faux"], correct: 0, fact: "Vrai. Sally Hawkins a appris la langue des signes américaine pour ce rôle." },
+            { q: "Dans “The Walking Dead”, quel personnage est incarné par une actrice réellement sourde ?", options: ["Carol", "Connie", "Maggie", "Michonne"], correct: 1, fact: "Lauren Ridloff, qui joue Connie, a été professeure de langue des signes avant d’être actrice." },
+            { q: "Dans “Avatar 2”, un acteur sourd a aidé à créer la langue des signes Na’vi. Vrai ou faux ?", options: ["Vrai", "Faux"], correct: 0, fact: "CJ Jones, acteur malentendant, a développé cette langue gestuelle unique." },
+            { q: "Quelle actrice atteinte d’amyotrophie spinale joue dans “Give Me Liberty” ?", options: ["Lauren 'Lolo' Spencer", "Emilia Clarke", "Dakota Johnson", "Jennifer Lawrence"], correct: 0, fact: "Lolo Spencer dit : 'Mon fauteuil, c’est juste mon accessoire préféré.'" },
+            { q: "Quel film Pixar aborde la différence avec tendresse et humour ?", options: ["Coco", "Luca", "Inside Out", "Soul"], correct: 1, fact: "Le réalisateur a confirmé que *Luca* parle d’acceptation et de différence (métaphore du monstre marin)." },
+            { q: "Vrai ou faux : il existe un Festival International du Film sur le Handicap (FIFH).", options: ["Vrai", "Faux"], correct: 0, fact: "Vrai ! Le FIFH à Lyon met en lumière des films inclusifs de tous horizons." },
+            { q: "Si Hollywood faisait un remake d’Intouchables, quel serait le meilleur titre ?", options: ["Inclusive Friends", "No Limits", "Accessibility Squad", "The Handi-Smash Duo"], correct: 0, fact: "La version américaine *The Upside* existe déjà, mais la version originale reste culte !" }
+        ];
+
+        // Données Blind Test (Juliette) - ID YOUTUBE MIS A JOUR (Audio/Lyrics versions)
+        const blindTestData = [
+            { ask: 'artist', artist: "Billie Eilish", song: "Birds of a Feather", ytId: "PejK1sI046E", start: 60, options: ["Billie Eilish", "Dua Lipa", "Olivia Rodrigo", "Ariana Grande"], correct: 0, fact: "Atteinte du syndrome de Gilles de la Tourette (tics moteurs/sonores) depuis l'âge de 11 ans." },
+            { ask: 'song', artist: "Sia", song: "Unstoppable", ytId: "cxjvTXo9WWM", start: 45, options: ["Chandelier", "Unstoppable", "Diamonds", "Titanium"], correct: 1, fact: "Autisme : diagnostiquée à 45 ans, elle a sorti un film sur le sujet en 2021." },
+            { ask: 'artist', artist: "Britney Spears", song: "Toxic", ytId: "t08ejoQkTSA", start: 50, options: ["Madonna", "Christina Aguilera", "Britney Spears", "Katy Perry"], correct: 2, fact: "Troubles bipolaires. Un trouble qui touche entre 650 000 et 1,6 millions de personnes en France." },
+            { ask: 'artist', artist: "Lewis Capaldi", song: "Someone You Loved", ytId: "QQBSO4pLOwU", start: 65, options: ["Ed Sheeran", "Lewis Capaldi", "Sam Smith", "Harry Styles"], correct: 1, fact: "Atteint du syndrome de Gilles de la Tourette. Ses tics s'intensifient avec les émotions fortes." },
+            { ask: 'song', artist: "Lady Gaga", song: "Shallow", ytId: "5vheNbQlsyU", start: 145, options: ["Poker Face", "Bad Romance", "Shallow", "Million Reasons"], correct: 2, fact: "Souffre de fibromyalgie : maladie chronique invisible causant douleurs diffuses et fatigue intense." },
+            { ask: 'artist', artist: "Ed Sheeran", song: "Perfect", ytId: "XWBtmk8H5sE", start: 30, options: ["Justin Bieber", "Shawn Mendes", "Charlie Puth", "Ed Sheeran"], correct: 3, fact: "A souffert de bégaiement toute son enfance. Le rap (Eminem) l'a aidé à surmonter cela." },
+            { ask: 'song', artist: "Selena Gomez", song: "Same Old Love", ytId: "pZ1Jp_W5lqQ", start: 40, options: ["Same Old Love", "Love You Like A Love Song", "Hands to Myself", "Wolves"], correct: 0, fact: "Forme agressive du lupus, maladie auto-immune qui lui a causé une insuffisance rénale et une greffe." },
+            { ask: 'artist', artist: "Andrea Bocelli", song: "Con Te Partiro", ytId: "tOdyf6aWzMc", start: 50, options: ["Luciano Pavarotti", "Andrea Bocelli", "Florent Pagny", "Patrick Fiori"], correct: 1, fact: "Né avec un glaucome héréditaire, il devient complètement aveugle à 12 ans après un accident." },
+            { ask: 'song', artist: "Clara Luciani", song: "Respire encore", ytId: "H7i-DqG7tqE", start: 40, options: ["La Grenade", "Le Reste", "Respire encore", "Amour toujours"], correct: 2, fact: "Trouble neurologique (tremblement essentiel). Elle dit trembler 'tout le temps'." },
+            { ask: 'artist', artist: "Gilbert Montagné", song: "Les Sunlights des tropiques", ytId: "1y2f-2J1x8o", start: 60, options: ["Michel Sardou", "Claude François", "Gilbert Montagné", "Jean-Jacques Goldman"], correct: 2, fact: "Une surdose d'oxygène en couveuse (né prématuré) a brûlé ses nerfs optiques." }
+        ];
+
+        // --- STATE ---
+        let currentQuizIndex = 0;
+        let currentBTIndex = 0;
+        let currentScore = 0;
+        let btTimerInterval;
+        let btTimeLeft = 15;
+        const BT_TIME_LIMIT = 15;
+        
+        // Variable pour le lecteur Youtube API
+        let player;
+
+        // --- YOUTUBE API SETUP ---
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('bt-player', {
+                height: '100%',
+                width: '100%',
+                playerVars: {
+                    'playsinline': 1,
+                    'controls': 0,
+                    'rel': 0,
+                    'fs': 0,
+                    'disablekb': 1,
+                    'origin': window.location.origin // Sécurité pour l'API
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            // 1 = Playing
+            if(event.data === YT.PlayerState.PLAYING) {
+                 document.getElementById('bt-play-icon').classList.remove('hidden-section'); // Reset for next time
+                 document.getElementById('bt-loading-text').classList.add('hidden-section');
+                 
+                 // Hide overlay fully once playing starts
+                 document.getElementById('bt-overlay-start').classList.add('hidden-section');
+                 
+                 // Show controls
+                 document.getElementById('bt-timer-container').style.display = 'block';
+                 document.getElementById('bt-options').classList.remove('hidden-section');
+                 startTimer();
+            }
+        }
+
+        function onPlayerError(event) {
+            console.error("Youtube Error:", event.data);
+            document.getElementById('bt-loading-text').classList.add('hidden-section');
+            
+            // 150 = Embed not allowed. 100 = Video not found.
+            if(event.data === 150 || event.data === 101 || event.data === 100) {
+                const data = blindTestData[currentBTIndex];
+                const fallbackLink = document.getElementById('bt-fallback-link');
+                // Lien direct vers la vidéo avec le timestamp
+                fallbackLink.href = `https://www.youtube.com/watch?v=${data.ytId}&t=${data.start}s`;
+                document.getElementById('bt-error').classList.remove('hidden-section');
+            }
+
+            // Allow skipping by showing options
+            document.getElementById('bt-options').classList.remove('hidden-section');
+            
+            // Populate options even if video failed so user can guess
+            const optionsContainer = document.getElementById('bt-options');
+            if(optionsContainer.children.length === 0) {
+                const data = blindTestData[currentBTIndex];
+                data.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-option w-full text-left p-3 rounded-lg border-2 border-pink-100 bg-white hover:bg-pink-50 text-gray-700 font-bold text-sm';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkBlindTestAnswer(index, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            }
+        }
+
+        // --- NAVIGATION FUNCTIONS ---
+        function showView(viewId) {
+            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(viewId).classList.remove('hidden-section');
+        }
+
+        function goHome() {
+            stopBlindTestAudio();
+            showView('view-home');
+        }
+
+        // --- QUIZ LOGIC ---
+        function startQuiz() {
+            currentQuizIndex = 0;
+            currentScore = 0;
+            document.getElementById('quiz-total').innerText = quizData.length;
+            loadQuestion();
+            showView('view-quiz');
+        }
+
+        function loadQuestion() {
+            const data = quizData[currentQuizIndex];
+            document.getElementById('quiz-current').innerText = currentQuizIndex + 1;
+            document.getElementById('quiz-question').innerText = data.q;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            document.getElementById('quiz-feedback').classList.add('hidden-section');
+
+            data.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option w-full text-left p-4 rounded-lg border border-gray-200 bg-white hover:bg-purple-50 text-gray-700 font-semibold';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            const data = quizData[currentQuizIndex];
+            const buttons = document.getElementById('quiz-options').children;
+            for (let btn of buttons) { btn.disabled = true; btn.classList.add('opacity-70', 'cursor-not-allowed'); }
+
+            if (selectedIndex === data.correct) {
+                btnElement.classList.remove('bg-white', 'border-gray-200');
+                btnElement.classList.add('correct-anim');
+                currentScore++;
+                confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+            } else {
+                btnElement.classList.remove('bg-white', 'border-gray-200');
+                btnElement.classList.add('wrong-anim');
+                buttons[data.correct].classList.remove('bg-white', 'border-gray-200');
+                buttons[data.correct].classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+            }
+            document.getElementById('quiz-fact').innerText = data.fact;
+            document.getElementById('quiz-feedback').classList.remove('hidden-section');
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizData.length) { loadQuestion(); } else { showEndScreen(true); }
+        }
+
+        // --- BLIND TEST LOGIC ---
+        function startBlindTest() {
+            currentBTIndex = 0;
+            currentScore = 0;
+            document.getElementById('bt-total').innerText = blindTestData.length;
+            loadBlindTest();
+            showView('view-blindtest');
+        }
+
+        function loadBlindTest() {
+            const data = blindTestData[currentBTIndex];
+            document.getElementById('bt-current').innerText = currentBTIndex + 1;
+            
+            // Reset Overlay
+            document.getElementById('bt-overlay-start').classList.remove('hidden-section');
+            document.getElementById('bt-play-icon').classList.remove('hidden-section');
+            document.getElementById('bt-loading-text').classList.add('hidden-section');
+            document.getElementById('bt-error').classList.add('hidden-section');
+            
+            document.getElementById('bt-options').classList.add('hidden-section');
+            document.getElementById('bt-result').classList.add('hidden-section');
+            document.getElementById('bt-timer-container').style.display = 'none';
+            
+            const instruction = data.ask === 'artist' ? "Quel est cet artiste ?" : "Quelle est cette chanson ?";
+            document.getElementById('bt-instruction').innerText = instruction;
+
+            if(player && typeof player.stopVideo === 'function') {
+                player.stopVideo();
+            }
+        }
+
+        function playBlindTestAudio() {
+            const data = blindTestData[currentBTIndex];
+            
+            // Visual Feedback
+            document.getElementById('bt-play-icon').classList.add('hidden-section');
+            document.getElementById('bt-loading-text').classList.remove('hidden-section');
+            document.getElementById('bt-error').classList.add('hidden-section');
+
+            // Utilisation de l'API pour charger et lancer la vidéo
+            if (player && typeof player.loadVideoById === 'function') {
+                try {
+                    player.loadVideoById({
+                        videoId: data.ytId,
+                        startSeconds: data.start
+                    });
+                    player.unMute(); 
+                    player.setVolume(100);
+                    // FORCE PLAY
+                    player.playVideo(); 
+                } catch(e) {
+                    console.error("Play error", e);
+                }
+            } else {
+                console.error("Player not initialized");
+                // Retry logic for initialization could go here, but for now show error
+                document.getElementById('bt-error').classList.remove('hidden-section');
+                document.getElementById('bt-loading-text').classList.add('hidden-section');
+            }
+            
+            // Prepare options but don't show them until music starts (handled in onStateChange)
+            const optionsContainer = document.getElementById('bt-options');
+            optionsContainer.innerHTML = '';
+            data.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option w-full text-left p-3 rounded-lg border-2 border-pink-100 bg-white hover:bg-pink-50 text-gray-700 font-bold text-sm';
+                btn.innerText = opt;
+                btn.onclick = () => checkBlindTestAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function startTimer() {
+            btTimeLeft = BT_TIME_LIMIT;
+            const bar = document.getElementById('bt-timer-bar');
+            bar.style.width = '100%';
+            bar.style.transition = `width ${BT_TIME_LIMIT}s linear`;
+            
+            void bar.offsetWidth; 
+            bar.style.width = '0%';
+
+            clearInterval(btTimerInterval);
+            btTimerInterval = setTimeout(() => { handleTimeOut(); }, BT_TIME_LIMIT * 1000);
+        }
+
+        function stopBlindTestAudio() {
+             if(player && typeof player.stopVideo === 'function') {
+                 player.stopVideo();
+             }
+             clearTimeout(btTimerInterval);
+        }
+
+        function handleTimeOut() {
+            checkBlindTestAnswer(-1, null);
+        }
+
+        function checkBlindTestAnswer(selectedIndex, btnElement) {
+            clearTimeout(btTimerInterval); 
+            stopBlindTestAudio(); 
+
+            const data = blindTestData[currentBTIndex];
+            const buttons = document.getElementById('bt-options').children;
+            for (let btn of buttons) { btn.disabled = true; btn.classList.add('opacity-70'); }
+
+            let isCorrect = false;
+            if (selectedIndex === data.correct) {
+                isCorrect = true;
+                currentScore++;
+                if(btnElement) {
+                    btnElement.classList.remove('bg-white', 'border-pink-100');
+                    btnElement.classList.add('correct-anim');
+                }
+                confetti({ particleCount: 50, spread: 60, colors: ['#ec4899'] });
+            } else {
+                if(btnElement) {
+                    btnElement.classList.remove('bg-white', 'border-pink-100');
+                    btnElement.classList.add('wrong-anim');
+                }
+                if(selectedIndex !== -1) {
+                     buttons[data.correct].classList.remove('bg-white', 'border-pink-100');
+                     buttons[data.correct].classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                }
+            }
+
+            const resHeader = document.getElementById('bt-result-header');
+            resHeader.innerHTML = isCorrect 
+                ? '<span class="text-green-500 font-bold text-xl"><i class="fas fa-check-circle"></i> Bonne réponse !</span>'
+                : '<span class="text-red-500 font-bold text-xl"><i class="fas fa-times-circle"></i> Dommage...</span>';
+            
+            document.getElementById('bt-artist-res').innerText = data.artist;
+            document.getElementById('bt-song-res').innerText = `"${data.song}"`;
+            document.getElementById('bt-fact').innerText = data.fact;
+            
+            const resultCard = document.getElementById('bt-result');
+            resultCard.classList.remove('hidden-section');
+            resultCard.classList.add('animate-bounce-in');
+        }
+
+        function nextBlindTest() {
+            currentBTIndex++;
+            if (currentBTIndex < blindTestData.length) { loadBlindTest(); } else { showEndScreen(false); }
+        }
+
+        function showEndScreen(isQuiz) {
+            const title = document.getElementById('end-title');
+            const message = document.getElementById('end-message');
+            const scoreDisplay = document.getElementById('end-score');
+            
+            stopBlindTestAudio();
+
+            const total = isQuiz ? quizData.length : blindTestData.length;
+            scoreDisplay.innerText = `${currentScore} / ${total}`;
+
+            let msg = "";
+            if (currentScore === total) { msg = "Incroyable ! Un score parfait ! 🏆"; } 
+            else if (currentScore >= total / 2) { msg = "Bravo ! Très belle performance ! 👏"; } 
+            else { msg = "Merci pour votre participation ! L'important est d'apprendre ensemble. 😊"; }
+
+            title.innerText = isQuiz ? "Quiz Terminé !" : "Blind Test Terminé !";
+            message.innerText = msg;
+            showView('view-end');
+        }
+    </script>
+</body>
+</html>
