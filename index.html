@@ -12,7 +12,8 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* Nouveau fond dégradé pour se rapprocher de l'image 1 */
+            background: linear-gradient(135deg, #001f60 0%, #000c2e 100%); 
             min-height: 100vh;
         }
 
@@ -62,7 +63,8 @@
 
         .bar {
             width: 10px;
-            background: linear-gradient(to top, #ec4899, #8b5cf6);
+            /* Couleurs du visualiseur ajustées */
+            background: linear-gradient(to top, #0066FF, #3b82f6); 
             margin: 0 4px;
             border-radius: 5px;
             animation: equalizer 1s ease-in-out infinite;
@@ -95,170 +97,212 @@
         
         .timer-bar {
             height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            /* Couleurs du timer ajustées */
+            background: linear-gradient(90deg, #0066FF, #3b82f6); 
             width: 100%;
             transition: width 1s linear;
         }
 
         .hidden-section { display: none !important; }
+
+        /* Custom Colors pour Tailwind (ajoutées pour plus de cohérence) */
+        .custom-blue-neosoft-dark { color: #00114F; }
+        .custom-blue-neosoft-light { color: #0066FF; }
+        .bg-custom-blue-neosoft-dark { background-color: #00114F; }
+        .bg-custom-blue-neosoft-light { background-color: #0066FF; }
+        .border-custom-blue-neosoft-dark { border-color: #00114F; }
+        .border-custom-blue-neosoft-light { border-color: #0066FF; }
+        .hover\:bg-custom-blue-neosoft-light-hover:hover { background-color: #3385ff; } /* Lighter shade for hover */
     </style>
 </head>
 <body class="text-gray-800 flex items-center justify-center p-4">
 
-    <!-- Main Container -->
-    <div id="app-container" class="w-full max-w-2xl glass-panel p-6 md:p-10 relative overflow-hidden">
+    <!-- Main Container (Élargi à max-w-4xl pour les 2 colonnes) -->
+    <div id="app-container" class="w-full max-w-4xl glass-panel p-6 md:p-10 relative overflow-hidden flex flex-col">
         
-        <!-- Decorative Background Elements -->
-        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"></div>
+        <!-- Decorative Background Elements (adapté aux couleurs Neosoft) -->
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-custom-blue-neosoft-light via-blue-400 to-indigo-500"></div>
         
         <!-- HEADER -->
-        <header class="text-center mb-8">
-            <div class="inline-block p-3 rounded-full bg-purple-100 text-purple-600 mb-3">
+        <header class="text-center mb-8 flex-shrink-0">
+            <div class="inline-block p-3 rounded-full bg-blue-100 text-custom-blue-neosoft-light mb-3">
                 <i class="fas fa-universal-access text-3xl"></i>
             </div>
-            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-custom-blue-neosoft-dark to-custom-blue-neosoft-light">
                 SEEPH 2025
             </h1>
             <p class="text-gray-500 text-sm mt-1">Semaine Européenne pour l'Emploi des Personnes Handicapées</p>
+
+            <!-- Zone Logos -->
+            <div class="flex justify-center items-center gap-8 mt-8 mb-6">
+                 <!-- Logo SEEPH (Gauche, Grand) -->
+                 <a href="https://www.semaine-emploi-handicap.com/" target="_blank" class="block" title="Visiter le site de la SEEPH">
+                    <img src="logo_seeph.png" alt="Logo SEEPH" class="h-20 transition-transform duration-200 hover:scale-105 object-contain">
+                </a>
+
+                <!-- Séparateur visuel -->
+                <div class="h-12 w-px bg-gray-300"></div>
+
+                <!-- Logo Neosoft (Droite, plus petit ~80%) -->
+                <a href="https://www.neosoft.fr/" target="_blank" class="block" title="Visiter le site Néosoft">
+                    <img src="logo.png" alt="Logo Néosoft" class="h-16 transition-transform duration-200 hover:scale-105 object-contain">
+                </a>
+            </div>
         </header>
 
-        <!-- VIEW: HOME -->
-        <div id="view-home" class="flex flex-col gap-4 animate-fade-in">
-            <div class="bg-indigo-50 p-6 rounded-xl border-l-4 border-indigo-500 mb-4">
-                <p class="italic text-indigo-800 text-center">
-                    "Venez tester vos connaissances et votre oreille musicale tout en (re)découvrant les thématiques liées au handicap !"
-                </p>
-                <p class="text-right text-xs font-bold mt-2 text-indigo-400">- La Team Handicap</p>
-            </div>
+        <!-- CONTENT AREA (Grow to fill space) -->
+        <main class="flex-grow">
 
-            <!-- BOUTON QUIZ -->
-            <button onclick="startQuiz()" class="group relative w-full bg-white border-2 border-purple-500 p-6 rounded-xl shadow-md hover:bg-purple-50 transition-all text-left flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-bold text-purple-700">🎬 Ciné-Quiz</h2>
-                    <p class="text-sm text-gray-500">Testez votre culture cinéma & inclusion</p>
+            <!-- VIEW: HOME -->
+            <div id="view-home" class="flex flex-col gap-4 animate-fade-in max-w-2xl mx-auto">
+                <div class="bg-indigo-50 p-6 rounded-xl border-l-4 border-custom-blue-neosoft-dark mb-4">
+                    <p class="italic text-custom-blue-neosoft-dark text-center">
+                        "Venez tester vos connaissances et votre oreille musicale tout en (re)découvrant les thématiques liées au handicap !"
+                    </p>
+                    <p class="text-right text-xs font-bold mt-2 text-indigo-400">- La Team Handicap</p>
                 </div>
-                <i class="fas fa-film text-3xl text-purple-300 group-hover:text-purple-600 transition-colors"></i>
-            </button>
 
-            <!-- BOUTON BLIND TEST (ACTIVÉ) -->
-            <button onclick="startBlindTest()" class="group relative w-full bg-white border-2 border-pink-500 p-6 rounded-xl shadow-md hover:bg-pink-50 transition-all text-left flex items-center justify-between mt-4">
-                <div>
-                    <h2 class="text-xl font-bold text-pink-700">🎵 Blind Test</h2>
-                    <p class="text-sm text-gray-500">Test Audio (11 extraits)</p>
-                </div>
-                <i class="fas fa-music text-3xl text-pink-300 group-hover:text-pink-600 transition-colors"></i>
-            </button>
-        </div>
-
-        <!-- VIEW: QUIZ -->
-        <div id="view-quiz" class="hidden-section">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="goHome()" class="text-sm text-gray-500 hover:text-purple-600"><i class="fas fa-arrow-left"></i> Accueil</button>
-                <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Question <span id="quiz-current">1</span>/<span id="quiz-total">10</span></span>
-            </div>
-
-            <div class="mb-6">
-                <h3 id="quiz-question" class="text-xl font-bold text-gray-800 mb-4 leading-relaxed"></h3>
-                <div id="quiz-options" class="grid gap-3"></div>
-            </div>
-
-            <div id="quiz-feedback" class="hidden-section mt-6 bg-blue-50 p-5 rounded-xl border border-blue-200">
-                <div class="flex items-start gap-3">
-                    <div class="mt-1 text-blue-500 text-xl"><i class="fas fa-lightbulb"></i></div>
+                <!-- BOUTON QUIZ -->
+                <button onclick="startQuiz()" class="group relative w-full bg-white border-2 border-custom-blue-neosoft-dark p-6 rounded-xl shadow-md hover:bg-blue-50 transition-all text-left flex items-center justify-between">
                     <div>
-                        <h4 class="font-bold text-blue-800 text-sm uppercase mb-1">Le Saviez-vous ?</h4>
-                        <p id="quiz-fact" class="text-sm text-blue-900 leading-relaxed"></p>
+                        <h2 class="text-xl font-bold custom-blue-neosoft-dark">🎬 Ciné-Quiz</h2>
+                        <p class="text-sm text-gray-500">Testez votre culture cinéma & inclusion</p>
                     </div>
-                </div>
-                <button onclick="nextQuestion()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                    Question Suivante <i class="fas fa-arrow-right ml-2"></i>
+                    <i class="fas fa-film text-3xl text-blue-300 group-hover:text-custom-blue-neosoft-light transition-colors"></i>
+                </button>
+
+                <!-- BOUTON BLIND TEST -->
+                <button onclick="startBlindTest()" class="group relative w-full bg-white border-2 border-custom-blue-neosoft-light p-6 rounded-xl shadow-md hover:bg-blue-50 transition-all text-left flex items-center justify-between mt-4">
+                    <div>
+                        <h2 class="text-xl font-bold custom-blue-neosoft-light">🎵 Blind Test</h2>
+                        <p class="text-sm text-gray-500">Test Audio (11 extraits)</p>
+                    </div>
+                    <i class="fas fa-music text-3xl text-blue-300 group-hover:text-custom-blue-neosoft-light transition-colors"></i>
                 </button>
             </div>
-        </div>
 
-        <!-- VIEW: BLIND TEST -->
-        <div id="view-blindtest" class="hidden-section">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="goHome()" class="text-sm text-gray-500 hover:text-pink-600"><i class="fas fa-arrow-left"></i> Accueil</button>
-                <span class="bg-pink-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded">Piste <span id="bt-current">1</span>/<span id="bt-total">3</span></span>
-            </div>
+            <!-- VIEW: QUIZ -->
+            <div id="view-quiz" class="hidden-section">
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="goHome()" class="text-sm text-gray-500 hover:custom-blue-neosoft-dark"><i class="fas fa-arrow-left"></i> Accueil</button>
+                    <span class="bg-blue-100 custom-blue-neosoft-dark text-xs font-semibold px-2.5 py-0.5 rounded">Question <span id="quiz-current">1</span>/<span id="quiz-total">10</span></span>
+                </div>
 
-            <div class="text-center mb-4">
-                <h3 id="bt-instruction" class="text-lg font-bold text-gray-700 mb-2">Quel est cet artiste ?</h3>
-                
-                <!-- Audio Player Container -->
-                <div class="relative w-full max-w-md mx-auto bg-black rounded-xl overflow-hidden shadow-lg mb-4 border-4 border-gray-800" style="height: 150px;">
-                    
-                    <!-- Start Overlay -->
-                    <div id="bt-overlay-start" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/80 cursor-pointer hover:bg-black/70 transition" onclick="playBlindTestAudio()">
-                        <div id="bt-play-icon">
-                            <i class="fas fa-play-circle text-6xl text-white opacity-90 drop-shadow-lg mb-2"></i>
-                            <div class="text-white font-bold uppercase tracking-wider">Lancer l'extrait</div>
+                <div class="mb-6">
+                    <h3 id="quiz-question" class="text-xl font-bold text-gray-800 mb-4 leading-relaxed text-center"></h3>
+                    <!-- GRILLE DE RÉPONSES : 2 colonnes sur écrans moyens+ -->
+                    <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                </div>
+
+                <div id="quiz-feedback" class="hidden-section mt-6 bg-blue-50 p-5 rounded-xl border border-blue-200">
+                    <div class="flex items-start gap-3">
+                        <div class="mt-1 custom-blue-neosoft-light text-xl"><i class="fas fa-lightbulb"></i></div>
+                        <div>
+                            <h4 class="font-bold text-custom-blue-neosoft-dark text-sm uppercase mb-1">Le Saviez-vous ?</h4>
+                            <p id="quiz-fact" class="text-sm text-blue-900 leading-relaxed"></p>
                         </div>
                     </div>
-
-                    <!-- Visualizer Animation (Hidden until playing) -->
-                    <div id="bt-visualizer" class="audio-visualizer hidden-section">
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                    </div>
-
-                    <!-- Hidden Audio Element -->
-                    <audio id="bt-audio-element" preload="auto"></audio>
-                </div>
-
-                <!-- Timer -->
-                <div id="bt-timer-container" class="timer-container max-w-md mx-auto mb-6">
-                    <div id="bt-timer-bar" class="timer-bar"></div>
-                </div>
-
-                <!-- Options Grid -->
-                <div id="bt-options" class="grid grid-cols-1 gap-3 max-w-md mx-auto hidden-section">
-                    <!-- Options générées ici -->
-                </div>
-            </div>
-
-            <!-- Result Card -->
-            <div id="bt-result" class="hidden-section transform transition-all duration-500 mt-4">
-                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-xl text-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-pink-500"></div>
-                    
-                    <div id="bt-result-header" class="mb-3"></div>
-
-                    <h2 id="bt-artist-res" class="text-xl font-black text-gray-800 mb-0 uppercase">ARTISTE</h2>
-                    <h3 id="bt-song-res" class="text-md font-medium text-pink-600 mb-3 italic">"Titre"</h3>
-                    
-                    <div class="bg-pink-50 rounded-lg p-4 text-left text-sm">
-                        <div class="flex items-center gap-2 mb-1">
-                            <i class="fas fa-info-circle text-pink-500"></i>
-                            <h4 class="font-bold text-pink-800">Focus Handicap</h4>
-                        </div>
-                        <p id="bt-fact" class="text-gray-700 leading-relaxed"></p>
-                    </div>
-
-                    <button onclick="nextBlindTest()" class="mt-4 w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded-lg">
-                        Suivant <i class="fas fa-forward ml-2"></i>
+                    <button onclick="nextQuestion()" class="mt-4 w-full bg-custom-blue-neosoft-light hover:bg-custom-blue-neosoft-light-hover text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        Question Suivante <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
             </div>
-        </div>
 
-        <!-- VIEW: END SCREEN -->
-        <div id="view-end" class="hidden-section text-center py-10">
-            <div class="mb-6 inline-block p-4 rounded-full bg-green-100 text-green-600">
-                <i class="fas fa-trophy text-5xl"></i>
+            <!-- VIEW: BLIND TEST -->
+            <div id="view-blindtest" class="hidden-section">
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="goHome()" class="text-sm text-gray-500 hover:custom-blue-neosoft-light"><i class="fas fa-arrow-left"></i> Accueil</button>
+                    <span class="bg-blue-100 custom-blue-neosoft-light text-xs font-semibold px-2.5 py-0.5 rounded">Piste <span id="bt-current">1</span>/<span id="bt-total">11</span></span>
+                </div>
+
+                <div class="text-center mb-4">
+                    <h3 id="bt-instruction" class="text-lg font-bold text-gray-700 mb-2">
+                        <!-- Le texte de la question sera injecté ici par JS -->
+                    </h3>
+                    
+                    <!-- Audio Player Container -->
+                    <div class="relative w-full max-w-md mx-auto bg-custom-blue-neosoft-dark rounded-xl overflow-hidden shadow-lg mb-4 border-4 border-gray-800" style="height: 150px;">
+                        
+                        <!-- Start Overlay -->
+                        <div id="bt-overlay-start" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/80 cursor-pointer hover:bg-black/70 transition" onclick="playBlindTestAudio()">
+                            <div id="bt-play-icon">
+                                <i class="fas fa-play-circle text-6xl text-white opacity-90 drop-shadow-lg mb-2"></i>
+                                <div class="text-white font-bold uppercase tracking-wider">Lancer l'extrait</div>
+                            </div>
+                        </div>
+
+                        <!-- Visualizer Animation (Hidden until playing) -->
+                        <div id="bt-visualizer" class="audio-visualizer hidden-section">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+
+                        <!-- Hidden Audio Element -->
+                        <audio id="bt-audio-element" preload="auto"></audio>
+                    </div>
+
+                    <!-- Timer -->
+                    <div id="bt-timer-container" class="timer-container max-w-md mx-auto mb-6">
+                        <div id="bt-timer-bar" class="timer-bar"></div>
+                    </div>
+
+                    <!-- Options Grid : 2 colonnes sur écrans moyens+ -->
+                    <div id="bt-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full hidden-section">
+                        <!-- Options générées ici -->
+                    </div>
+                </div>
+
+                <!-- Result Card -->
+                <div id="bt-result" class="hidden-section transform transition-all duration-500 mt-4">
+                    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-xl text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-2 bg-custom-blue-neosoft-light"></div>
+                        
+                        <div id="bt-result-header" class="mb-3"></div>
+
+                        <h2 id="bt-artist-res" class="text-xl font-black text-gray-800 mb-0 uppercase">ARTISTE</h2>
+                        <h3 id="bt-song-res" class="text-md font-medium custom-blue-neosoft-light mb-3 italic">"Titre"</h3>
+                        
+                        <div class="bg-blue-50 rounded-lg p-4 text-left text-sm">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i class="fas fa-info-circle custom-blue-neosoft-light"></i>
+                                <h4 class="font-bold custom-blue-neosoft-dark">Focus Handicap</h4>
+                            </div>
+                            <p id="bt-fact" class="text-gray-700 leading-relaxed"></p>
+                        </div>
+
+                        <button onclick="nextBlindTest()" class="mt-4 w-full bg-custom-blue-neosoft-dark hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">
+                            Suivant <i class="fas fa-forward ml-2"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <h2 id="end-title" class="text-3xl font-bold text-gray-800 mb-2">Terminé !</h2>
-            <p id="end-score" class="text-4xl font-black text-purple-600 mb-2"></p>
-            <p id="end-message" class="text-gray-600 mb-8 px-4"></p>
-            <button onclick="goHome()" class="bg-purple-600 text-white px-8 py-3 rounded-full font-bold hover:bg-purple-700 transition shadow-lg transform hover:scale-105">
-                Retour à l'accueil
-            </button>
-        </div>
+
+            <!-- VIEW: END SCREEN -->
+            <div id="view-end" class="hidden-section text-center py-10">
+                <div class="mb-6 inline-block p-4 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-trophy text-5xl"></i>
+                </div>
+                <h2 id="end-title" class="text-3xl font-bold text-gray-800 mb-2">Terminé !</h2>
+                <p id="end-score" class="text-4xl font-black custom-blue-neosoft-dark mb-2"></p>
+                <p id="end-message" class="text-gray-600 mb-8 px-4"></p>
+                <button onclick="goHome()" class="bg-custom-blue-neosoft-light text-white px-8 py-3 rounded-full font-bold hover:bg-custom-blue-neosoft-light-hover transition shadow-lg transform hover:scale-105">
+                    Retour à l'accueil
+                </button>
+            </div>
+
+        </main>
+
+        <!-- FOOTER / CREDITS -->
+        <footer class="mt-8 text-center border-t border-gray-200 pt-4 flex-shrink-0">
+            <p class="text-xs text-custom-blue-neosoft-dark opacity-80 leading-relaxed">
+                Un grand merci à <span class="font-bold text-custom-blue-neosoft-light">Sahra CHERGUI</span> et <span class="font-bold text-custom-blue-neosoft-light">Juliette TURIN</span><br>
+                pour l'animation de ce quiz et blind test dans le cadre de la semaine SEEPH.
+            </p>
+        </footer>
 
     </div>
 
@@ -439,7 +483,7 @@
 
             data.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
-                btn.className = 'btn-option w-full text-left p-4 rounded-lg border border-gray-200 bg-white hover:bg-purple-50 text-gray-700 font-semibold';
+                btn.className = 'btn-option w-full text-left p-4 rounded-lg border border-gray-200 bg-white hover:bg-blue-50 text-gray-700 font-semibold';
                 btn.innerText = opt;
                 btn.onclick = () => checkAnswer(index, btn);
                 optionsContainer.appendChild(btn);
@@ -497,8 +541,18 @@
             document.getElementById('bt-result').classList.add('hidden-section');
             document.getElementById('bt-timer-container').style.display = 'none';
             
-            const instruction = data.ask === 'artist' ? "Quel est cet artiste ?" : "Quelle est cette chanson ?";
-            document.getElementById('bt-instruction').innerText = instruction;
+            // --- MODIFICATION DEBUT ---
+            // Adaptation dynamique du titre pour donner l'indice (Artiste ou Chanson)
+            let instruction = "";
+            if (data.ask === 'artist') {
+                // On cherche l'artiste, donc on affiche le titre pour aider
+                instruction = `Qui est l'interprète de <br><span class="text-custom-blue-neosoft-light text-xl">"${data.song}"</span> ?`;
+            } else {
+                // On cherche la chanson, donc on affiche l'artiste pour aider
+                instruction = `Quel est ce titre de <br><span class="text-custom-blue-neosoft-light text-xl">${data.artist}</span> ?`;
+            }
+            document.getElementById('bt-instruction').innerHTML = instruction;
+            // --- MODIFICATION FIN ---
             
             // Prepare audio source
             audioElement.src = data.audioSrc;
