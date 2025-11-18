@@ -144,7 +144,7 @@
             <button onclick="startBlindTest()" class="group relative w-full bg-white border-2 border-pink-500 p-6 rounded-xl shadow-md hover:bg-pink-50 transition-all text-left flex items-center justify-between mt-4">
                 <div>
                     <h2 class="text-xl font-bold text-pink-700">🎵 Blind Test</h2>
-                    <p class="text-sm text-gray-500">Test Audio (3 extraits)</p>
+                    <p class="text-sm text-gray-500">Test Audio (11 extraits)</p>
                 </div>
                 <i class="fas fa-music text-3xl text-pink-300 group-hover:text-pink-600 transition-colors"></i>
             </button>
@@ -285,14 +285,14 @@
         ];
 
         // Données Blind Test (Juliette) - FICHIERS LOCAUX
-        // NOTE : Les fichiers doivent être nommés exactement comme ci-dessous
+        // NOTE : Les fichiers doivent être nommés EXACTEMENT comme ci-dessous
         const blindTestData = [
             { 
                 ask: 'artist', 
                 artist: "Billie Eilish", 
                 song: "Birds of a Feather", 
                 audioSrc: "Eilish.mp3", 
-                start: 60, // Démarre à 1:00
+                start: 60, 
                 options: ["Billie Eilish", "Dua Lipa", "Olivia Rodrigo", "Ariana Grande"], 
                 correct: 0, 
                 fact: "Atteinte du syndrome de Gilles de la Tourette (tics moteurs/sonores) depuis l'âge de 11 ans." 
@@ -302,7 +302,7 @@
                 artist: "Sia", 
                 song: "Unstoppable", 
                 audioSrc: "Sia.mp3", 
-                start: 45, // Démarre à 0:45
+                start: 45, 
                 options: ["Chandelier", "Unstoppable", "Diamonds", "Titanium"], 
                 correct: 1, 
                 fact: "Autisme : diagnostiquée à 45 ans, elle a sorti un film sur le sujet en 2021." 
@@ -312,10 +312,90 @@
                 artist: "Susan Boyle", 
                 song: "I Dreamed a Dream", 
                 audioSrc: "boyle.mp3", 
-                start: 60, // Démarre à 1:00
+                start: 60, 
                 options: ["Susan Boyle", "Adele", "Céline Dion", "Whitney Houston"], 
                 correct: 0, 
                 fact: "Asperger diagnostiqué à 51 ans, trouble neurologique associé à l'autisme, difficulté de la communication." 
+            },
+            { 
+                ask: 'artist', 
+                artist: "Lewis Capaldi", 
+                song: "Someone You Loved", 
+                audioSrc: "Capaldi.mp3", 
+                start: 60, 
+                options: ["Ed Sheeran", "Lewis Capaldi", "Sam Smith", "Harry Styles"], 
+                correct: 1, 
+                fact: "Atteint du syndrome de Gilles de la Tourette. Ses tics deviennent intenses lors de fortes émotions." 
+            },
+            { 
+                ask: 'artist', 
+                artist: "Britney Spears", 
+                song: "Toxic", 
+                audioSrc: "Spears.mp3", 
+                start: 50, 
+                options: ["Madonna", "Christina Aguilera", "Britney Spears", "Katy Perry"], 
+                correct: 2, 
+                fact: "Troubles bipolaires. Un trouble qui touche entre 650 000 et 1,6 millions de personnes en France." 
+            },
+            { 
+                ask: 'song', 
+                artist: "Selena Gomez", 
+                song: "Same Old Love", 
+                audioSrc: "Gomez.mp3", 
+                start: 40, 
+                options: ["Same Old Love", "Love You Like A Love Song", "Hands to Myself", "Wolves"], 
+                correct: 0, 
+                fact: "Forme agressive du lupus, maladie auto-immune chronique qui lui a causé une insuffisance rénale." 
+            },
+            { 
+                ask: 'song', 
+                artist: "Lady Gaga", 
+                song: "Shallow", 
+                audioSrc: "Gaga.mp3", 
+                start: 60, 
+                options: ["Poker Face", "Bad Romance", "Shallow", "Million Reasons"], 
+                correct: 2, 
+                fact: "Souffre de fibromyalgie : maladie chronique invisible causant des douleurs diffuses et une fatigue intense." 
+            },
+            { 
+                ask: 'artist', 
+                artist: "Ed Sheeran", 
+                song: "Perfect", 
+                audioSrc: "Sheeran.mp3", 
+                start: 30, 
+                options: ["Justin Bieber", "Shawn Mendes", "Charlie Puth", "Ed Sheeran"], 
+                correct: 3, 
+                fact: "A souffert de bégaiement toute son enfance. Il s'est aidé notamment en essayant de rapper comme Eminem !" 
+            },
+            { 
+                ask: 'artist', 
+                artist: "Andrea Bocelli", 
+                song: "Con Te Partiro", 
+                audioSrc: "Bocelli.mp3", 
+                start: 50, 
+                options: ["Luciano Pavarotti", "Andrea Bocelli", "Florent Pagny", "Patrick Fiori"], 
+                correct: 1, 
+                fact: "Né avec un glaucome héréditaire, il devient complètement aveugle à l'âge de 12 ans suite à un accident." 
+            },
+            { 
+                ask: 'song', 
+                artist: "Clara Luciani", 
+                song: "Respire encore", 
+                audioSrc: "Luciani.mp3", 
+                start: 40, 
+                options: ["La Grenade", "Le Reste", "Respire encore", "Amour toujours"], 
+                correct: 2, 
+                fact: "Trouble neurologique (tremblement essentiel) qui touche ses membres supérieurs. Elle dit trembler 'tout le temps'." 
+            },
+            { 
+                ask: 'artist', 
+                artist: "Gilbert Montagné", 
+                song: "Les Sunlights des tropiques", 
+                audioSrc: "Montagne.mp3", 
+                start: 60, 
+                options: ["Michel Sardou", "Claude François", "Gilbert Montagné", "Jean-Jacques Goldman"], 
+                correct: 2, 
+                fact: "Né prématurément, un air trop riche en oxygène en couveuse a causé une rétinopathie." 
             }
         ];
 
